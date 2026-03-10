@@ -1,17 +1,25 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;
-using UnityEngine.PlayerLoop;
 
 public class GameManager : MonoBehaviour
 {
+    // Singleton
+    public static GameManager Instance { get; private set; }
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     public enum GameState { Idle, Running, Ended }
 
-    // Game state management
     public GameState currentState = GameState.Idle;
 
-    // Score and highscore
     private int score = 0;
     public int Score
     {
@@ -29,28 +37,21 @@ public class GameManager : MonoBehaviour
     }
     private int highscore = 0;
 
-    // UI elements
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI gameOverText;
 
-    // Timer
     private float roundTime = 30f;
     private float remainingTime;
 
-    // Worms
-    public Worm[] worms; // Assign all Worm objects in Inspector
+    public Worm[] worms;
 
-    // Sounds
     public AudioSource bgMusic;
     public AudioSource hitSound;
 
     void Start()
     {
-        // Load highscore
         highscore = PlayerPrefs.GetInt("Highscore", 0);
-
-        // Initialize game
         ResetGame();
         bgMusic.Play();
     }
@@ -78,9 +79,7 @@ public class GameManager : MonoBehaviour
         Score = 0;
 
         foreach (Worm worm in worms)
-        {
             worm.StartMoving();
-        }
     }
 
     public void EndGame()
@@ -89,9 +88,7 @@ public class GameManager : MonoBehaviour
         gameOverText.gameObject.SetActive(true);
 
         foreach (Worm worm in worms)
-        {
             worm.StopMoving();
-        }
     }
 
     public void ResetGame()
@@ -102,9 +99,7 @@ public class GameManager : MonoBehaviour
         gameOverText.gameObject.SetActive(false);
 
         foreach (Worm worm in worms)
-        {
             worm.ResetWorm();
-        }
     }
 
     public void PlayHitSound()

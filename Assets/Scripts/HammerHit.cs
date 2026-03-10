@@ -1,25 +1,49 @@
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit; // Assuming PICO uses XR Interaction Toolkit
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class HammerHit : MonoBehaviour
 {
-    // This script is optional if hit detection is in Worm.cs, but provided as per request.
-    // It can handle additional hammer-specific logic, like vibration on hit.
+    [Header("Haptics")]
+    public float hapticAmplitude = 0.5f;
+    public float hapticDuration = 0.1f;
 
+    [Header("Swing Validation")]
+    public float minSwingSpeed = 0.5f;
+
+    private ActionBasedController xrController;
+    private Rigidbody rb;
     private GameManager gameManager;
 
     void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = GameManager.Instance;
+        rb = GetComponent<Rigidbody>();
+        xrController = GetComponentInParent<ActionBasedController>();
+
+        if (rb == null)
+        {
+            Debug.LogWarning("HammerHit: No Rigidbody found. Adding one automatically.");
+            rb = gameObject.AddComponent<Rigidbody>();
+            rb.isKinematic = true;
+            rb.useGravity = false;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public bool IsValidSwing()
     {
-        if (collision.gameObject.CompareTag("Worm") && gameManager.currentState == GameManager.GameState.Running)
+        return rb != null && rb.linearVelocity.magnitude >= minSwingSpeed;
+    }
+
+    public void TriggerHaptics()
+    {
+        if (xrController == null)
         {
-            // Hit logic is already in Worm.cs, but this can add effects like controller haptics.
-            // For PICO, use PXR_Input.SendHapticImpulse() if setup.
-            Debug.Log("Hammer hit a worm!");
+            Debug.LogWarning("HammerHit: No XR Controller found for haptics.");
+            return;
         }
+
+        xrController.SendHapticImpulse(hapticAmplitude, hapticDuration);
     }
 }

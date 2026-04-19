@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -13,7 +14,7 @@ public class HammerHit : MonoBehaviour
     private ActionBasedController xrController;
     private Rigidbody rb;
     private GameManager gameManager;
-
+    
     void Start()
     {
         gameManager = GameManager.Instance;
@@ -28,6 +29,12 @@ public class HammerHit : MonoBehaviour
             rb.useGravity = false;
             rb.interpolation = RigidbodyInterpolation.Interpolate;
             rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        }
+
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+        {
+            col.isTrigger = true;
         }
     }
 

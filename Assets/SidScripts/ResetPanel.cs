@@ -1,23 +1,28 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.XR.Interaction.Toolkit;
 
 public class ResetPanel : MonoBehaviour
 {
     public GameObject resetPanel;
 
+    private bool buttonWasPressed = false;
+
     void Update()
     {
-        // Secondary button on right controller toggles the panel
-        bool pressed;
         var device = UnityEngine.XR.InputDevices.GetDeviceAtXRNode(
             UnityEngine.XR.XRNode.RightHand);
 
-        if (device.TryGetFeatureValue(
-                UnityEngine.XR.CommonUsages.secondaryButton, out pressed) && pressed)
+        bool pressed;
+        device.TryGetFeatureValue(
+            UnityEngine.XR.CommonUsages.secondaryButton, out pressed);
+
+        // Only toggle on the FIRST frame the button is pressed
+        if (pressed && !buttonWasPressed)
         {
             TogglePanel();
         }
+
+        buttonWasPressed = pressed;
     }
 
     public void TogglePanel()

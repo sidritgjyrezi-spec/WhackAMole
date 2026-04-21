@@ -5,7 +5,12 @@ public class MainMenu : MonoBehaviour
 {
     public void StartGame()
     {
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("WackAmole");
+    }
+    
+    public void BackToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void EndGame()

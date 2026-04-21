@@ -4,7 +4,7 @@ using System.Collections;
 public class Worm : MonoBehaviour
 {
     [Header("Movement")]
-    public float upPosition = 0.3f;
+    public float upPosition = 0.6f;
     public float downPosition = -0.3f;
     public float moveSpeed = 2f;
     public float waitTimeUp = 1.2f;
